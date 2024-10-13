@@ -1,3 +1,3 @@
 #! /usr/bin/env bash
 
-docker run --rm dagger-hello-deno:latest
+docker run --rm dagger-excuse-deno:latest

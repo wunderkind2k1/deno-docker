@@ -19,7 +19,7 @@ func main() {
 
 // only works if no other image has been created in the meantime
 func tagDockerImage() error {
-	cmd := exec.Command("docker", "load", "-i", "dagger-hello-deno.tar")
+	cmd := exec.Command("docker", "load", "-i", "dagger-excuse-deno.tar")
 	if err := cmd.Run(); err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func tagDockerImage() error {
 		return err
 	}
 
-	cmd = exec.Command("docker", "tag", strings.TrimSpace(string(imageID)), "dagger-hello-deno:latest")
+	cmd = exec.Command("docker", "tag", strings.TrimSpace(string(imageID)), "dagger-excuse-deno:latest")
 	return cmd.Run()
 }
 
@@ -55,14 +55,14 @@ func build(ctx context.Context) error {
 		return err
 	}
 
-	// Copy the hello.ts file
+	// Copy the excuse.ts file
 	srcDir := client.Host().Directory(".")
 	withSrc := deno.WithDirectory("/app", srcDir)
 
 	// Cross-compile for macOS
 	macBinary, err := withSrc.WithWorkdir("/app").
-		WithExec([]string{"deno", "compile", "--allow-net", "--target", "x86_64-apple-darwin", "hello.ts"}).
-		File("/app/hello").
+		WithExec([]string{"deno", "compile", "--allow-net=developerexcuses.com", "--target", "x86_64-apple-darwin", "excuse.ts"}).
+		File("/app/excuse").
 		Sync(ctx)
 	if err != nil {
 		return err
@@ -70,8 +70,8 @@ func build(ctx context.Context) error {
 
 	// Cross-compile for Windows
 	winBinary, err := withSrc.WithWorkdir("/app").
-		WithExec([]string{"deno", "compile", "--allow-net", "--target", "x86_64-pc-windows-msvc", "hello.ts"}).
-		File("/app/hello.exe").
+		WithExec([]string{"deno", "compile", "--allow-net=developerexcuses.com", "--target", "x86_64-pc-windows-msvc", "excuse.ts"}).
+		File("/app/excuse.exe").
 		Sync(ctx)
 	if err != nil {
 		return err
@@ -79,8 +79,8 @@ func build(ctx context.Context) error {
 
 	// Compile for Linux
 	linuxBinary, err := withSrc.WithWorkdir("/app").
-		WithExec([]string{"deno", "compile", "--allow-net", "hello.ts"}).
-		File("/app/hello").
+		WithExec([]string{"deno", "compile", "--allow-net=developerexcuses.com", "excuse.ts"}).
+		File("/app/excuse").
 		Sync(ctx)
 	if err != nil {
 		return err
@@ -88,31 +88,31 @@ func build(ctx context.Context) error {
 
 	// Create the final container using distroless
 	distroless := client.Container().From("gcr.io/distroless/cc-debian12")
-	final := distroless.WithFile("/app/hello", linuxBinary).
+	final := distroless.WithFile("/app/excuse", linuxBinary).
 		WithWorkdir("/app").
-		WithEntrypoint([]string{"/app/hello"})
+		WithEntrypoint([]string{"/app/excuse"})
 
 	// Export the binaries
-	mac, err := macBinary.Export(ctx, "hello-mac")
+	mac, err := macBinary.Export(ctx, "excuse-mac")
 	if err != nil {
 		return err
 	}
 	fmt.Printf("Mac export result %s\n", mac)
 
-	win, err := winBinary.Export(ctx, "hello-win.exe")
+	win, err := winBinary.Export(ctx, "excuse-win.exe")
 	if err != nil {
 		return err
 	}
 	fmt.Printf("Win export result %s\n", win)
 
-	linux, err := linuxBinary.Export(ctx, "hello-linux")
+	linux, err := linuxBinary.Export(ctx, "excuse-linux")
 	if err != nil {
 		return err
 	}
 	fmt.Printf("Linux export result %s\n", linux)
 
 	// Export the final container as a tar file
-	_, err = final.Export(ctx, "dagger-hello-deno.tar")
+	_, err = final.Export(ctx, "dagger-excuse-deno.tar")
 	if err != nil {
 		return err
 	}
@@ -121,6 +121,6 @@ func build(ctx context.Context) error {
 		return err
 	}
 
-	fmt.Println("Container image exported as dagger-hello-deno.tar")
+	fmt.Println("Container image exported as dagger-excuse-deno.tar")
 	return nil
 }

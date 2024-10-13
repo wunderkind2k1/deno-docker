@@ -26,10 +26,10 @@ func TestDaggerPipeline(t *testing.T) {
 // Function to determine whether to run Daggerpipeline.go
 func shouldRunPipeline() bool {
 	// Check if the Docker tar file or the executables exist
-	_, tarErr := os.Stat("dagger-hello-deno.tar")
-	_, linuxErr := os.Stat("hello-linux")
-	_, macErr := os.Stat("hello-mac")
-	_, winErr := os.Stat("hello-win.exe")
+	_, tarErr := os.Stat("dagger-excuse-deno.tar")
+	_, linuxErr := os.Stat("excuse-linux")
+	_, macErr := os.Stat("excuse-mac")
+	_, winErr := os.Stat("excuse-win.exe")
 
 	// If any of the files do not exist, we need to run the pipeline
 	return os.IsNotExist(tarErr) || os.IsNotExist(linuxErr) || os.IsNotExist(macErr) || os.IsNotExist(winErr)
@@ -45,7 +45,7 @@ func runDaggerPipeline(t *testing.T) {
 }
 
 func verifyExecutableBuilds(t *testing.T) {
-	executables := []string{"hello-linux", "hello-mac", "hello-win.exe"}
+	executables := []string{"excuse-linux", "excuse-mac", "excuse-win.exe"}
 	for _, executable := range executables {
 		if _, err := exec.Command("ls", executable).Output(); err != nil {
 			t.Errorf("Expected executable %s not found", executable)
@@ -54,14 +54,14 @@ func verifyExecutableBuilds(t *testing.T) {
 }
 
 func verifyDockerTarExported(t *testing.T) {
-	tarFileName := "dagger-hello-deno.tar"
+	tarFileName := "dagger-excuse-deno.tar"
 	if _, err := os.Stat(tarFileName); os.IsNotExist(err) {
 		t.Errorf("Expected Docker tar file %s not found", tarFileName)
 	}
 }
 
 func verifyTagNameAndVersion(t *testing.T) {
-	tagName := "dagger-hello-deno:latest"
+	tagName := "dagger-excuse-deno:latest"
 	cmd := exec.Command("docker", "inspect", tagName)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
